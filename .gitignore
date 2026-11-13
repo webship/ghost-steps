@@ -1,0 +1,15 @@
+node_modules/
+tests/reports/*.json
+tests/reports/*.html
+screenshots/
+videos/
+*.log
+.DS_Store
+.claude/
+
+# A local build of the test site (scripts/build-site.sh builds it in SITE_DIR).
+site/
+
+# Working notes of the exploration rounds.
+explore/
+exploration/

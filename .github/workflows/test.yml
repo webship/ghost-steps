@@ -1,0 +1,73 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - 2.0.x
+  pull_request:
+    branches:
+      - 2.0.x
+  workflow_dispatch:
+
+jobs:
+  cucumber:
+    name: ghost-steps test suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      HEADLESS: 'true'
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Install DDEV
+        uses: ddev/github-action-setup-ddev@v1
+        with:
+          autostart: false
+
+      - name: Build the real site with DDEV (official install, seeded through the Admin API)
+        run: scripts/build-site.sh
+
+      - name: Check the site is the one cucumber.js runs against by default
+        run: |
+          DEFAULT_URL="$(LAUNCH_URL= node -e "console.log(require('./cucumber.js').default.worldParameters.launchUrl)")"
+          echo "Built: $LAUNCH_URL, default: $DEFAULT_URL"
+          test "${LAUNCH_URL%/}" = "$DEFAULT_URL"
+
+      - name: Check the JSDoc examples and feature steps against the step regexes
+        run: npm run test:examples
+
+      - name: Run cucumber-js dry-run (ambiguity / undefined step check)
+        run: npx cucumber-js --dry-run
+
+      - name: Run ghost-steps test suite
+        run: npx cucumber-js
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-report
+          path: tests/reports/
+          retention-days: 14
+
+      - name: Upload failure screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failure-screenshots
+          path: screenshots/
+          retention-days: 14
+          if-no-files-found: ignore
