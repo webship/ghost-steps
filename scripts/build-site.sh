@@ -29,6 +29,8 @@ SITE_DIR="${SITE_DIR:-$(mktemp -d)}"
 SITE_URL="https://${PROJECT_NAME}.ddev.site"
 
 mkdir -p "$SITE_DIR/.ddev"
+# mktemp makes a private folder; the installer refuses a folder others cannot read.
+chmod 755 "$SITE_DIR"
 cd "$SITE_DIR"
 
 # A generic web server: DDEV starts no nginx and no PHP; the router sends ports
