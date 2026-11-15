@@ -1,6 +1,6 @@
 {
   "name": "@webship-js/ghost-steps",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Cucumber step definitions for testing Ghost sites with webship-js.",
   "main": "tests/step-definitions/ghost.steps.js",
   "files": [
