@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/webship/ghost-steps/2.0.x/assets/logo.svg" alt="Ghost logo" width="96"></p>
+
 # ghost-steps
 
 Cucumber step definitions for testing Ghost sites with
@@ -363,3 +365,7 @@ npx cucumber-js                  # the whole suite, against the real site
 ## License
 
 MIT
+
+## Logo
+
+The Ghost logo in this README comes from Simple Icons 16.37.0 (CC0-1.0), filled with the colour the set lists for the brand. The Ghost name and logo are trademarks of their owner; this pack is not affiliated with or endorsed by them.
