@@ -9,6 +9,13 @@ on:
       - 2.0.x
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   cucumber:
     name: ghost-steps test suite
@@ -62,12 +69,15 @@ jobs:
           name: cucumber-report
           path: tests/reports/
           retention-days: 14
+          if-no-files-found: ignore
 
-      - name: Upload failure screenshots
+      - name: Upload failure screenshots and videos
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: failure-screenshots
-          path: screenshots/
+          path: |
+            screenshots/
+            videos/
           retention-days: 14
           if-no-files-found: ignore
