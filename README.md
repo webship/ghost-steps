@@ -166,7 +166,7 @@ uses when `LAUNCH_URL` is not set; its mailbox is at
 
 | Variable | Default | Meaning |
 | --- | --- | --- |
-| `GHOST_VERSION` | `6.77.0` | The release to install. |
+| `GHOST_VERSION` | `6.78.0` | The release to install. |
 | `NODE_VERSION` | `22.23.5` | The Node.js version of the container. |
 | `PROJECT_NAME` | `ghoststeps` | The DDEV project name. |
 | `SITE_DIR` | a temporary folder | The project folder. |

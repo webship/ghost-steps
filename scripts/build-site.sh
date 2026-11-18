@@ -12,7 +12,7 @@
 #     the staff accounts, the content, a member and the navigation.
 #
 # Settings (environment variables, all optional):
-#   GHOST_VERSION   the release to install             (default 6.77.0)
+#   GHOST_VERSION   the release to install             (default 6.78.0)
 #   NODE_VERSION    the Node.js version of the container (default 22.23.5: Ghost asks for ^22.23.5 or ^24.22.3)
 #   PROJECT_NAME    the DDEV project name              (default ghoststeps)
 #   SITE_DIR        the project folder                 (default a new temporary folder)
@@ -20,7 +20,7 @@
 # and named in cucumber.js; the features never create or delete staff users.
 set -euo pipefail
 
-GHOST_VERSION="${GHOST_VERSION:-6.77.0}"
+GHOST_VERSION="${GHOST_VERSION:-6.78.0}"
 GHOST_CLI_VERSION="${GHOST_CLI_VERSION:-1.34.1}"
 NODE_VERSION="${NODE_VERSION:-22.23.5}"
 PROJECT_NAME="${PROJECT_NAME:-ghoststeps}"
