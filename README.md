@@ -26,6 +26,149 @@ seeds it through its Admin API and runs the whole suite against it on every
 push and pull request; see
 [`.github/workflows/test.yml`](.github/workflows/test.yml).
 
+## From nothing to a green run
+
+What the machine needs: Docker, [DDEV](https://ddev.com), git, and Node.js 20
+or later with npm. The site itself (Node.js 22 and MySQL 8) runs in DDEV's
+containers.
+
+**1. The site.** The pack's own build script (the one CI runs) installs the
+platform the official way inside one DDEV project and seeds it through its
+Admin API with the accounts of [Test users](#test-users), 14 published posts
+and 3 drafts, 2 pages, 3 tags, 3 members and the navigation (see
+[A test site](#a-test-site)). It takes three to four minutes; when DDEV's own
+download of the Node.js the platform needs times out on a slow connection,
+the script installs it in the container itself.
+
+```bash
+git clone https://github.com/webship/ghost-steps.git
+SITE_DIR="$PWD/ghost-site" ghost-steps/scripts/build-site.sh
+```
+
+The site answers at `https://ghoststeps.ddev.site`, its admin at
+`https://ghoststeps.ddev.site/ghost/` and the mailbox that catches its mail at
+`https://ghoststeps.ddev.site:8026`.
+
+**2. A test project.**
+
+```bash
+mkdir ghost-tests && cd ghost-tests
+npm init -y
+npm install --save-dev webship-js @webship-js/ghost-steps
+npx init-webship-js
+```
+
+`npx init-webship-js` writes `cucumber.js`, `playwright.config.ts`, the
+`tests/` folders with a first feature and the `npm test` scripts, and installs
+Chromium. npm usually runs it already when it installs webship-js; a second
+run changes nothing.
+
+**3. `cucumber.js`.** Replace the file with the wiring of the pack: the step
+files of webship-js and of the pack, the address of the site and of its
+mailbox, and the accounts (the JSON of [Test users](#test-users)).
+
+```javascript
+module.exports = {
+  default: {
+    requireModule: ['tsx/cjs'],
+    require: [
+      'node_modules/webship-js/tests/step-definitions/**/*.js',
+      'node_modules/@webship-js/ghost-steps/tests/step-definitions/*.js',
+      'tests/step-definitions/**/*.js',
+    ],
+    paths: ['tests/features/**/*.feature'],
+    format: ['@cucumber/pretty-formatter', 'json:tests/reports/cucumber_report.json'],
+    worldParameters: {
+      launchUrl: process.env.LAUNCH_URL || 'https://ghoststeps.ddev.site',
+      mailUrl: process.env.MAIL_URL || 'https://ghoststeps.ddev.site:8026',
+      // The waits webship-js adds around each page, scenario and step (milliseconds).
+      minWaitTime: { page: 3000, before_scenario: 0, after_scenario: 0, before_step: 0, after_step: 0 },
+      users: {
+        "owner": { "name": "Olivia Owner", "role": "Owner", "email": "owner@example.com", "password": "Owner-Test-Key-2026" },
+        "administrator": { "name": "Adam Administrator", "role": "Administrator", "email": "administrator@example.com", "password": "Administrator-Test-Key-2026" },
+        "editor": { "name": "Edith Editor", "role": "Editor", "email": "editor@example.com", "password": "Editor-Test-Key-2026" },
+        "author": { "name": "Arthur Author", "role": "Author", "email": "author@example.com", "password": "Author-Test-Key-2026" },
+        "contributor": { "name": "Connie Contributor", "role": "Contributor", "email": "contributor@example.com", "password": "Contributor-Test-Key-2026" }
+      },
+    },
+  },
+};
+```
+
+**4. A first feature**, `tests/features/first-run.feature`:
+
+```gherkin
+Feature: First run
+  Scenario: The owner signs in to the admin
+    Given I am logged in to the admin as "owner"
+    Then I should be logged in to the admin as "owner"
+    And I should see "Posts" in the admin menu
+
+  Scenario: The home page lists the posts
+    Given I am an anonymous user
+    When I go to the homepage
+    Then the page should be the home page
+    And I should see the post "Travel diary 8" in the post feed
+```
+
+**5. Run it.**
+
+```bash
+npm test
+```
+
+A green first run prints every step, then the summary (the starter feature of
+`npx init-webship-js` and the two scenarios above, passed) and the HTML report
+it wrote:
+
+```
+3 scenarios (3 passed)
+9 steps (9 passed)
+0m12.368s (executing steps: 0m12.333s)
+[webship-js] HTML report → …/ghost-tests/tests/reports/cucumber_report.html
+```
+
+From there, copy the features of [`tests/features/`](tests/features/) (they
+also ship in the package, under
+`node_modules/@webship-js/ghost-steps/tests/features/`, with the image
+`tests/fixtures/feature.png` they upload): together they use every step of the
+pack.
+
+### What the suite tests
+
+The features of this repository run every step of the pack against the test
+site, and CI runs them on every change: signing in to the admin with each of
+the five staff roles, a wrong password and an unknown address refused, signing
+out, a visitor sent to the sign in form; the admin menu and its screens, the
+user menu, notifications, dialogs, action menus and the search of the admin;
+what each role may open and do (the staff list and profiles, the roles each
+may invite, an editor publishing another's post, an author's own posts, a
+contributor's drafts); posts and pages in the editor (title, text, cards, an
+uploaded image, the settings panel with the address, tags, access, excerpt,
+featured switch and feature image), the preview, publishing, updating,
+unpublishing, scheduling and deleting; the lists of posts, pages, tags and
+members with their filters, sorting, counts and search; tags created, changed
+and deleted; members created with labels, searched, filtered and deleted; the
+settings (the title and description, a required field, the navigation links,
+the announcement bar); and the front end: the home page and its pages, posts,
+pages, tag and author archives, a draft's 404, the navigation, the
+announcement, the search of the site, the membership form (sign up, sign in
+with the e-mailed link and with the e-mailed code, the account, signing out)
+with the mailbox of the site, and the structural accessibility checks of the
+home page.
+
+Not tested: paid memberships, tiers, offers and payments; newsletters and
+posts sent by e-mail; comments; the analytics and network screens; themes,
+design and code injection; integrations, webhooks and the Content API; imports
+and exports; a staff invitation sent and accepted (the suite never creates a
+staff user); the e-mailed code for a new staff device (turned off on the test
+site). What a run leaves on the site: the two images the editor feature
+uploads (the platform keeps an uploaded file when the post that used it is
+deleted, and has no screen or API to delete one), the sessions of its sign
+ins, and the history of staff actions and member sign ins the platform keeps.
+The first run also rewrites the navigation setting in another key order (the
+same links).
+
 ## Requirements
 
 - Node.js 20 or later
