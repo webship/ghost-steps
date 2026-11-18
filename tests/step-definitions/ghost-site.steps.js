@@ -31,7 +31,7 @@ async function bodyClasses(world) {
  *
  * Example #1: Then the page generator should start with "Ghost"
  * Example #2: Then the page generator should start with "Ghost 6"
- * Example #3: Then the page generator should start with "Ghost 6.77"
+ * Example #3: Then the page generator should start with "Ghost 6.78"
  * Example #4: And the page generator should start with "Ghost 6."
  * Example #5: But the page generator should start with "Ghost "
  *
