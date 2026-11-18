@@ -86,7 +86,7 @@ npm install --save-dev @webship-js/ghost-steps
 | `tests/step-definitions/ghost.steps.js` | The admin as a whole: signing in and out, the session, the admin menu and its screens, the user menu, notifications, field errors, dialogs, action menus and the admin search. |
 | `tests/step-definitions/ghost-editor.steps.js` | Posts and pages in the editor: title, text, cards, the settings panel (URL, tags, access, excerpt, featured), the feature image, preview, publish, schedule, unpublish, update and delete. |
 | `tests/step-definitions/ghost-admin.steps.js` | The lists of posts, pages, tags and members with filters, sorting and search; tags; members and labels; staff users and roles; the settings, the navigation links and the announcement bar. |
-| `tests/step-definitions/ghost-site.steps.js` | The front end: the kind of page, archives and their pages, the post feed, the navigation, the announcement bar, the search of the site, the membership form and the mailbox of the test site. |
+| `tests/step-definitions/ghost-site.steps.js` | Signing in on the site first (the membership form: sign in, sign up, the account, and the mailbox of the test site), then the front end: the kind of page, archives and their pages, the post feed, the navigation, the announcement bar, the search of the site. |
 | `tests/step-definitions/ghost-helpers.js` | Shared plumbing. It registers no step. |
 | `tests/features/*.feature` | Reference features for the test site that `scripts/build-site.sh` builds. |
 | `scripts/build-site.sh`, `scripts/seed-site.js` | Build the test site in one DDEV project and fill it with the accounts and the content the features expect. |
@@ -294,12 +294,26 @@ example and every feature step against the definitions. This is the summary.
 | `I clear the announcement` | When |
 | `there is no announcement` | Given |
 
-### The front end, the membership form and the mailbox
+### The membership form, the mailbox and the front end
 
 `tests/step-definitions/ghost-site.steps.js`
 
 | Step | Type |
 | --- | --- |
+| `I open the membership (sign in\|sign up\|account) form` | When |
+| `I fill in "<label>" with "<value>" in the membership form` | When |
+| `I submit the membership form` | When |
+| `the membership form should( not) show "<text>"` | Then |
+| `I close the membership form` | When |
+| `I should( not) see a subscribe button` | Then |
+| `the post should( not) be restricted to members` | Then |
+| `I should( not) be signed in as (a member\|the member "<email>")` | Then |
+| `I sign out as a member` | When |
+| `the mailbox is empty` | Given |
+| `an e-mail with the subject "<subject>" should have been sent to "<address>"` | Then |
+| `I follow the link e-mailed to "<address>"` | When |
+| `I enter the code e-mailed to "<address>" in the membership form` | When |
+| `the membership notification should say "<text>"` | Then |
 | `the page generator should start with "<prefix>"` | Then |
 | `the page should( not) be (the home page\|a post\|a page\|a tag archive\|an author archive)` | Then |
 | `the page should be the (tag\|author) archive of "<slug>"` | Then |
@@ -315,20 +329,6 @@ example and every feature step against the definitions. This is the summary.
 | `I should( not) see the site search result "<title>"` | Then |
 | `I open the site search result "<title>"` | When |
 | `I close the site search` | When |
-| `I open the membership (sign in\|sign up\|account) form` | When |
-| `I fill in "<label>" with "<value>" in the membership form` | When |
-| `I submit the membership form` | When |
-| `the membership form should( not) show "<text>"` | Then |
-| `I close the membership form` | When |
-| `I should( not) see a subscribe button` | Then |
-| `the post should( not) be restricted to members` | Then |
-| `I should( not) be signed in as (a member\|the member "<email>")` | Then |
-| `I sign out as a member` | When |
-| `the mailbox is empty` | Given |
-| `an e-mail with the subject "<subject>" should have been sent to "<address>"` | Then |
-| `I follow the link e-mailed to "<address>"` | When |
-| `I enter the code e-mailed to "<address>" in the membership form` | When |
-| `the membership notification should say "<text>"` | Then |
 
 ## Notes
 
