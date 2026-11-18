@@ -33,6 +33,15 @@ Feature: Staff users and what each role may do
     When I answer the dialog with "Close"
     Then I should not see the dialog "Invite a new staff user"
 
+  Scenario: An editor may invite authors and contributors only
+    Given I am logged in to the admin as "editor"
+    Then the staff invitation should offer the role "Author"
+    And the staff invitation should offer the role "Contributor"
+    But the staff invitation should not offer the role "Editor"
+    And the staff invitation should not offer the role "Administrator"
+    When I answer the dialog with "Close"
+    Then I should not see the dialog "Invite a new staff user"
+
   Scenario: An administrator reaches the settings
     Given I am logged in to the admin as "administrator"
     Then I should see "Settings" in the admin menu
