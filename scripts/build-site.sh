@@ -58,6 +58,21 @@ YAML
 
 ddev start
 
+# DDEV installs the Node.js of nodejs_version when the web container starts,
+# and gives the download 30 seconds (START_SCRIPT_TIMEOUT). On a slow
+# connection it keeps the Node.js of its image instead, which the platform
+# refuses. Install it again, without that limit, before going on.
+container_node() { ddev exec node --version 2>/dev/null | tr -d '\r'; }
+if [ "$(container_node)" != "v${NODE_VERSION}" ]; then
+  echo "The web container has Node.js $(container_node), not v${NODE_VERSION}: installing it again ..."
+  ddev exec "START_SCRIPT_TIMEOUT=900 n-install.sh" || true
+  if [ "$(container_node)" != "v${NODE_VERSION}" ]; then
+    echo "The web container still has Node.js $(container_node); Ghost ${GHOST_VERSION} needs ${NODE_VERSION}." >&2
+    echo "DDEV downloads it from nodejs.org when the container starts: check the connection, then run this script again." >&2
+    exit 1
+  fi
+fi
+
 # The official install path: ghost-cli downloads the release and its
 # dependencies. --no-setup: the configuration is written below instead of asked.
 if [ ! -e ghost/current/index.js ]; then
