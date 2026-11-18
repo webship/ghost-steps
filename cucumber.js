@@ -33,7 +33,7 @@ module.exports = {
     requireModule: ['tsx/cjs'],
     require: [
       'node_modules/webship-js/tests/step-definitions/**/*.js',          // Webship-js core step definitions (auto HTML report on exit; disable: WEBSHIP_REPORT_DISABLE=1).
-      // 'node_modules/webship-js/tests/step-definitions-diffy/**/*.js', // Diffy step definitions (optional).
+      // 'node_modules/@webship-js/diffy-steps/tests/step-definitions/**/*.js', // Visual comparison steps (optional; npm install --save-dev @webship-js/diffy-steps).
       'tests/step-definitions/**/*.js',                                  // Your custom step definitions.
     ],
     // FEATURES=tests/features/a.feature,tests/features/b.feature runs a subset too.
