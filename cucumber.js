@@ -45,7 +45,8 @@ module.exports = {
       'json:tests/reports/cucumber_report.json',
     ],
     formatOptions: {
-      colorsEnabled: true,
+      // Colours follow the terminal (GitHub Actions counts as one); FORCE_COLOR=1
+      // or FORCE_COLOR=0 sets them. cucumber-js 12 deprecated `colorsEnabled`.
       theme: {
         'feature keyword': ['bold', 'blue'],
         'feature name': ['blue', 'underline'],
