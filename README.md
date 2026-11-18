@@ -125,6 +125,26 @@ The steps sign in through the sign in form. A site that asks a new device for
 an e-mailed code cannot be signed in to by a suite: the test site sets
 `security.staffDeviceVerification` to `false`.
 
+## Test users
+
+The accounts this repository's suite signs in with, exactly as `cucumber.js`
+lists them in `worldParameters.users` (the default values;
+`SITE_<HANDLE>_EMAIL` and `SITE_<HANDLE>_PASSWORD` replace them).
+[`scripts/seed-site.js`](scripts/seed-site.js) creates them on the local test
+site that [`scripts/build-site.sh`](scripts/build-site.sh) builds, and CI does
+the same on the runner. They are placeholder credentials of that throwaway
+site, not of any real one.
+
+```json
+{
+  "owner": { "name": "Olivia Owner", "role": "Owner", "email": "owner@example.com", "password": "Owner-Test-Key-2026" },
+  "administrator": { "name": "Adam Administrator", "role": "Administrator", "email": "administrator@example.com", "password": "Administrator-Test-Key-2026" },
+  "editor": { "name": "Edith Editor", "role": "Editor", "email": "editor@example.com", "password": "Editor-Test-Key-2026" },
+  "author": { "name": "Arthur Author", "role": "Author", "email": "author@example.com", "password": "Author-Test-Key-2026" },
+  "contributor": { "name": "Connie Contributor", "role": "Contributor", "email": "contributor@example.com", "password": "Contributor-Test-Key-2026" }
+}
+```
+
 ## A test site
 
 [`scripts/build-site.sh`](scripts/build-site.sh) installs the platform the
