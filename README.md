@@ -355,12 +355,16 @@ npm ci
 npx playwright install chromium
 scripts/build-site.sh            # builds https://ghoststeps.ddev.site
 npm run test:examples            # every example and feature step resolves to one definition
+npm run test:paths               # a feature or a scenario named on the command line runs alone
 npx cucumber-js --dry-run        # no undefined, no ambiguous step
 npx cucumber-js                  # the whole suite, against the real site
 ```
 
-`FEATURES=tests/features/tags.feature npx cucumber-js` runs one feature;
-`CUCUMBER_TAGS=@critical npx cucumber-js` runs a lane.
+`npx cucumber-js tests/features/tags.feature` runs one feature and
+`npx cucumber-js tests/features/tags.feature:<line>` one scenario (the line of
+its `Scenario:`; the paths of `cucumber.js` are left out when the command line
+names any); `FEATURES=tests/features/tags.feature npx cucumber-js` runs a
+subset too; `CUCUMBER_TAGS=@critical npx cucumber-js` runs a lane.
 
 ## License
 

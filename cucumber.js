@@ -1,3 +1,32 @@
+// A feature file, a scenario (file:line), a folder or a rerun file named on
+// the command line of cucumber-js runs alone: `npx cucumber-js
+// tests/features/login.feature`. cucumber-js 12 adds the paths of the command
+// line to the `paths` of this file instead of using them alone, so `paths` is
+// left empty when the command line names any, as in webship-js itself.
+const OPTIONS_WITH_A_VALUE = new Set([
+  '-c', '--config', '-f', '--format', '--format-options', '--i18n-keywords',
+  '-i', '--import', '-l', '--loader', '--language', '--name', '--order',
+  '-p', '--profile', '--parallel', '--plugin', '--plugin-options',
+  '-r', '--require', '--require-module', '--retry', '--retry-tag-filter',
+  '--shard', '-t', '--tags', '--world-parameters',
+]);
+
+function commandLinePaths() {
+  // Only when cucumber-js itself runs, not when another script reads this file.
+  if (!/cucumber(-js|\.js)?$/.test(String(process.argv[1] || ''))) return [];
+  const args = process.argv.slice(2);
+  const paths = [];
+  for (let i = 0; i < args.length; i += 1) {
+    if (args[i].startsWith('-')) {
+      if (OPTIONS_WITH_A_VALUE.has(args[i])) i += 1;
+    } else {
+      paths.push(args[i]);
+    }
+  }
+  return paths;
+}
+
+
 module.exports = {
   default: {
     // The step timeout is webship-js's (45 s, set when it loads): WEBSHIP_STEP_TIMEOUT=<milliseconds> changes it; a `timeout` key here is ignored.
@@ -7,8 +36,8 @@ module.exports = {
       // 'node_modules/webship-js/tests/step-definitions-diffy/**/*.js', // Diffy step definitions (optional).
       'tests/step-definitions/**/*.js',                                  // Your custom step definitions.
     ],
-    // FEATURES=tests/features/a.feature,tests/features/b.feature runs a subset.
-    paths: process.env.FEATURES ? process.env.FEATURES.split(',') : ['tests/features/**/*.feature'],
+    // FEATURES=tests/features/a.feature,tests/features/b.feature runs a subset too.
+    paths: process.env.FEATURES ? process.env.FEATURES.split(',') : (commandLinePaths().length ? [] : ['tests/features/**/*.feature']),
     // CUCUMBER_TAGS=@critical runs a lane; the default keeps work in progress out.
     tags: process.env.CUCUMBER_TAGS || 'not @wip and not @auth-setup',
     format: [
