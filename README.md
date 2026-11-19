@@ -49,6 +49,26 @@ The site answers at `https://ghoststeps.ddev.site`, its admin at
 `https://ghoststeps.ddev.site/ghost/` and the mailbox that catches its mail at
 `https://ghoststeps.ddev.site:8026`.
 
+In the [Webship Workspace](https://github.com/webship/workspace), its Ghost
+plugin builds the site instead, in a sites folder of the workspace (`test/`
+here; `dev/`, `sandboxes/` and `demos/` work the same):
+
+```bash
+bash core/scripts/plugins.sh --require ghost --with-needs
+bash core/scripts/plugins.sh --activate ghost --with-needs
+bash core/scripts/plugins.sh --install ghost
+bash test/cmd-ghost-project.sh mysite --install --add-users
+```
+
+That site answers at `https://mysite.ddev.site`. Its owner is the workspace
+account (`account:` in the workspace's `core/config/settings.yml`), and its
+staff accounts are the plugin's (`administrator@example.com`,
+`editor@example.com`, `author@example.com` and `contributor@example.com`, each
+with the password `dD.123123ddd`; step 3 names them). It has none of the content the script seeds (the posts, pages, tags and members of
+[A test site](#a-test-site)): the last line of the first feature names a seeded post, so on such a site name one of its own,
+`And I should see the post "Coming soon" in the post feed`; the features of
+[`tests/features/`](tests/features/) are written for the seeded site.
+
 **2. A test project.**
 
 ```bash
@@ -95,6 +115,11 @@ module.exports = {
 };
 ```
 
+On a site from the Webship Workspace (step 1), `owner` is the workspace account (the `mail` and `pass` of `account:` in its
+`core/config/settings.yml`), and the staff are the plugin's: `"administrator": { "email": "administrator@example.com",
+"password": "dD.123123ddd", … }`, and the same for `editor`, `author` and `contributor`. Its address goes in
+`LAUNCH_URL` (step 5).
+
 **4. A first feature**, `tests/features/first-run.feature`:
 
 ```gherkin
@@ -117,6 +142,7 @@ Feature: First run
 npm test
 ```
 
+(`LAUNCH_URL=https://mysite.ddev.site npm test` for a site at another address.)
 A green first run prints every step, then the summary (the starter feature of
 `npx init-webship-js` and the two scenarios above, passed) and the HTML report
 it wrote:
