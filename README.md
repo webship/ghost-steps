@@ -28,7 +28,7 @@ push and pull request; see
 
 ## From nothing to a green run
 
-What the machine needs: Docker, [DDEV](https://ddev.com), git, and Node.js 20
+What the machine needs: Docker, [DDEV](https://ddev.com), git, and Node.js 24
 or later with npm. The site itself (Node.js 22 and MySQL 8) runs in DDEV's
 containers.
 
@@ -197,7 +197,7 @@ same links).
 
 ## Requirements
 
-- Node.js 20 or later
+- Node.js 24 or later
 - A webship-js 2.0 test project (`webship-js` 2.0.10 or later)
 - A Ghost 6 site to test. The front end steps read what the platform prints
   for any theme (`{{body_class}}`, `{{ghost_head}}`, the search and membership
